@@ -11,6 +11,7 @@ interface ButtonProps {
   disabled?: boolean;
   loading?: boolean;
   className?: string;
+  icon?: ReactNode;
 }
 
 const Button: React.FC<ButtonProps> = ({
@@ -21,7 +22,8 @@ const Button: React.FC<ButtonProps> = ({
   size = 'md',
   disabled = false,
   loading = false,
-  className = ''
+  className = '',
+  icon
 }) => {
   const baseClasses = 'inline-flex items-center justify-center font-medium rounded-xl transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2';
   
@@ -52,6 +54,7 @@ const Button: React.FC<ButtonProps> = ({
         disabled || loading ? disabledClasses : ''
       } ${className}`}
     >
+      {icon && <div className="mr-2">{icon}</div>}
       {loading && (
         <Loader2 className="w-4 h-4 mr-2 animate-spin" />
       )}
