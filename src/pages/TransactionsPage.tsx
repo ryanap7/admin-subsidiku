@@ -8,11 +8,13 @@ import Card from '../components/UI/Card';
 import { useTransactionStore } from '../store/useTransactionStore';
 import { Recipient, Transaction } from '../types';
 import { formatCurrency, formatDate, getTransactionStatusColor } from '../utils';
+import SelectRecipientStatus from '../components/Select/SelectRecipientStatus';
 
 const TransactionsPage: React.FC = () => {
     const navigate = useNavigate();
     const [searchTerm, setSearchTerm] = useState('');
     const [filterStatus, setFilterStatus] = useState('all');
+    const [filterRecipientStatus, setFilterRecipientStatus] = useState('all');
     const [filterProduct, setFilterProduct] = useState('all');
     const [filterDate, setFilterDate] = useState('all');
 
@@ -33,8 +35,9 @@ const TransactionsPage: React.FC = () => {
             recipient?.nik.includes(searchTerm) ||
             String(transaction.number).toLowerCase().includes(searchTerm.toLowerCase());
         const matchesStatus = filterStatus === 'all' || transaction.status === filterStatus;
+        const matchesRecipientStatus = filterRecipientStatus === 'all' || recipient.status === filterRecipientStatus;
         const matchesProduct = filterProduct === 'all' || transaction.metadataProduct.name === filterProduct;
-        console.log(recipient?.nik.includes(searchTerm));
+
         let matchesDate = true;
         if (filterDate !== 'all') {
             const transactionDate = new Date(transaction.date);
@@ -57,7 +60,7 @@ const TransactionsPage: React.FC = () => {
             }
         }
 
-        return matchesSearch && matchesStatus && matchesProduct && matchesDate;
+        return matchesSearch && matchesStatus && matchesProduct && matchesDate && matchesRecipientStatus;
     });
 
     const handleViewDetails = (transaction: Transaction) => {
@@ -120,18 +123,7 @@ const TransactionsPage: React.FC = () => {
                                 </select>
                                 <ChevronDown className='absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4 pointer-events-none' />
                             </div>
-                            <div className='relative'>
-                                <select
-                                    value={filterProduct}
-                                    onChange={(e) => setFilterProduct(e.target.value)}
-                                    className='appearance-none pl-4 pr-10 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent bg-white'
-                                >
-                                    <option value='all'>Semua Produk</option>
-                                    <option value='pupuk'>Pupuk</option>
-                                    <option value='LPG'>LPG</option>
-                                </select>
-                                <ChevronDown className='absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4 pointer-events-none' />
-                            </div>
+                            <SelectRecipientStatus value={filterRecipientStatus} onChange={setFilterRecipientStatus} /> 
                             <div className='relative'>
                                 <select
                                     value={filterStatus}

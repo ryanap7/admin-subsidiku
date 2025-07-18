@@ -148,7 +148,7 @@ const RecipientsDetailPage: React.FC = () => {
                 </div>
                 <div className='flex gap-3'>
                     <Button
-                        icon={<Edit className='w-4 h-4' />}
+                        Icon={Edit}
                         variant='secondary'
                         onClick={() => {
                             handleModalChange('recipientForm', recipient);
@@ -162,7 +162,7 @@ const RecipientsDetailPage: React.FC = () => {
                     >
                         Edit Data
                     </Button>
-                    <Button icon={<UserX className='w-4 h-4' />} variant='danger' onClick={() => handleModalChange('suspend', recipient)}>
+                    <Button Icon={UserX} variant='danger' onClick={() => handleModalChange('suspend', recipient)}>
                         Tangguhkan
                     </Button>
                 </div>

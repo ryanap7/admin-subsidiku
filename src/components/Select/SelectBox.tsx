@@ -1,3 +1,4 @@
+import { ChevronDown } from 'lucide-react';
 import { SelectBoxProps } from '../../types/ComponentModels';
 
 export default function SelectBox({ label, name, options, register, description, rules, error, ...rest }: SelectBoxProps) {
@@ -21,6 +22,7 @@ export default function SelectBox({ label, name, options, register, description,
                         </option>
                     ))}
                 </select>
+                <ChevronDown className='absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4 pointer-events-none' />
             </div>
             {error ? (
                 <p className='text-sm text-red-600 mt-1'>{error}</p>

@@ -4,7 +4,7 @@ import { useProductStore } from '../../../store/useProductStore';
 import { MerchantProduct } from '../../../types';
 import { generateOptions } from '../../../utils';
 import InputNumber from '../../Input/InputNumber';
-import SelectBox from '../../Input/SelectBox';
+import SelectBox from '../../Select/SelectBox';
 import Button from '../../UI/Button';
 import Modal from '../../UI/Modal';
 

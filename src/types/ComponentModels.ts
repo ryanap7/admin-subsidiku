@@ -2,6 +2,7 @@
 import React, { InputHTMLAttributes, SelectHTMLAttributes } from 'react';
 import { Control, RegisterOptions, UseFormRegister, UseFormSetValue, UseFormWatch } from 'react-hook-form';
 import { Recipient } from '.';
+import { LucideIcon } from 'lucide-react';
 
 export interface Pagination {
     search?: string;
@@ -119,7 +120,7 @@ export interface DropdownMultipleSelectProps {
     searchable?: boolean;
     maxHeight?: string;
     error?: string;
- }
+}
 
 export interface FormButtonsProps {
     okText: string;
@@ -137,4 +138,16 @@ export interface PageHeaderProps {
     title: string;
     description?: string;
     children?: React.ReactNode;
+}
+
+export interface ButtonProps {
+    children: React.ReactNode;
+    onClick?: () => void;
+    type?: 'button' | 'submit' | 'reset';
+    variant?: 'primary' | 'secondary' | 'success' | 'danger' | 'warning';
+    size?: 'sm' | 'md' | 'lg';
+    disabled?: boolean;
+    loading?: boolean;
+    className?: string; 
+    Icon?: LucideIcon;
 }

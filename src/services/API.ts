@@ -93,23 +93,23 @@ export class API {
         return axiosInstance.get(`/transactions`, { params: params });
     }
 
-    static getTransaction(transactionId: string) {
-        return axiosInstance.get(`/transactions/${transactionId}`);
+    static getTransaction(transactionNumber: string) {
+        return axiosInstance.get(`/transactions/${transactionNumber}`);
     }
 
     static createTransaction(data: Transaction) {
         return axiosInstance.post(`/transactions`, data);
     } 
 
-    static deleteTransaction(transactionId: string) {
-        return axiosInstance.delete(`/transactions/${transactionId}`);
+    static deleteTransaction(transactionNumber: string) {
+        return axiosInstance.delete(`/transactions/${transactionNumber}`);
     }
-    static approveTransaction(transactionId: string) {
-        return axiosInstance.post(`/transactions/${transactionId}/approve`);
+    static approveTransaction(transactionNumber: string) {
+        return axiosInstance.post(`/transactions/${transactionNumber}/approve`);
     }
 
-    static rejectTransaction(transactionId: string) {
-        return axiosInstance.post(`/transactions/${transactionId}/reject`);
+    static rejectTransaction(transactionNumber: string, notes: string) {
+        return axiosInstance.post(`/transactions/${transactionNumber}/reject`, { notes });
     }
 
     static getTransactionStatistics() {

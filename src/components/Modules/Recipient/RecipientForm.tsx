@@ -2,12 +2,12 @@ import { UseFormRegister, UseFormSetValue, UseFormWatch } from 'react-hook-form'
 import { Merchant, Product, Recipient } from '../../../types';
 import { generateOptions } from '../../../utils';
 import { booleanOptions, classificationOptions, districtOptions, homeOwnershipOptions, recipientStatus } from '../../../utils/options';
-import DropdownMultipleSelect from '../../Input/DropdownMultipleSelect';
+import DropdownMultipleSelect from '../../Select/DropdownMultipleSelect';
 import InputNumber from '../../Input/InputNumber';
 import InputPassword from '../../Input/InputPassword';
 import InputText from '../../Input/InputText';
 import RadioGroup from '../../Input/RadioGroup';
-import SelectBox from '../../Input/SelectBox';
+import SelectBox from '../../Select/SelectBox';
 import TextArea from '../../Input/TextArea';
 import FormButtons from '../../UI/FormButtons';
 import Modal from '../../UI/Modal';

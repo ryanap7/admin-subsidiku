@@ -13,11 +13,11 @@ interface TransactionStore {
     };
     loading: boolean;
     fetchTransactions: (params?: Pagination) => Promise<void>;
-    getTransaction: (transactionId: string) => Promise<Transaction>;
+    getTransaction: (transactionNumber: string) => Promise<Transaction>;
     createTransaction: (data: Transaction) => Promise<void>;
-    deleteTransaction: (transactionId: string) => Promise<void>;
-    approveTransaction: (transactionId: string) => Promise<void>;
-    rejectTransaction: (transactionId: string) => Promise<void>;
+    deleteTransaction: (transactionNumber: string) => Promise<void>;
+    approveTransaction: (transactionNumber: string) => Promise<void>;
+    rejectTransaction: (transactionNumber: string, notes: string) => Promise<void>;
     fetchTransactionStatistics: () => Promise<void>;
 }
 
@@ -62,11 +62,11 @@ export const useTransactionStore = create<TransactionStore>((set) => ({
         }
     },
 
-    deleteTransaction: async (transactionId) => {
+    deleteTransaction: async (transactionNumber) => {
         set({ loading: true });
         try {
-            await API.deleteTransaction(transactionId);
-            set((state) => ({ transactions: state.transactions.filter((transaction) => String(transaction.id) !== transactionId) }));
+            await API.deleteTransaction(transactionNumber);
+            set((state) => ({ transactions: state.transactions.filter((transaction) => String(transaction.id) !== transactionNumber) }));
         } catch (error: unknown) {
             console.error('Failed to delete transaction:', error);
             if (error instanceof Error && 'response' in error) {
@@ -79,13 +79,13 @@ export const useTransactionStore = create<TransactionStore>((set) => ({
         }
     },
 
-    approveTransaction: async (transactionId) => {
+    approveTransaction: async (transactionNumber) => {
         set({ loading: true });
         try {
-            await API.approveTransaction(transactionId);
+            await API.approveTransaction(transactionNumber);
             set((state) => ({
                 transactions: state.transactions.map((transaction) =>
-                    String(transaction.id) === String(transactionId) ? { ...transaction, status: 'approved' } : transaction
+                    String(transaction.id) === String(transactionNumber) ? { ...transaction, status: 'approved' } : transaction
                 ),
             }));
         } catch (error: unknown) {
@@ -100,13 +100,13 @@ export const useTransactionStore = create<TransactionStore>((set) => ({
         }
     },
 
-    rejectTransaction: async (transactionId) => {
+    rejectTransaction: async (transactionNumber, notes: string) => {
         set({ loading: true });
         try {
-            await API.rejectTransaction(transactionId);
+            await API.rejectTransaction(transactionNumber, notes);
             set((state) => ({
                 transactions: state.transactions.map((transaction) =>
-                    String(transaction.id) === String(transactionId) ? { ...transaction, status: 'rejected' } : transaction
+                    String(transaction.id) === String(transactionNumber) ? { ...transaction, status: 'rejected' } : transaction
                 ),
             }));
         } catch (error: unknown) {
@@ -138,9 +138,9 @@ export const useTransactionStore = create<TransactionStore>((set) => ({
         }
     },
 
-    getTransaction: async (transactionId: string) => {
+    getTransaction: async (transactionNumber: string) => {
         try {
-            const response = await API.getTransaction(transactionId);
+            const response = await API.getTransaction(transactionNumber);
             return response.data.data || response.data;
         } catch (error: unknown) {
             console.error('Failed to get transaction:', error);

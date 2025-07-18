@@ -9,7 +9,7 @@ import Checkbox from '../components/Input/Checkbox';
 import InputNumber from '../components/Input/InputNumber';
 import InputPassword from '../components/Input/InputPassword';
 import InputText from '../components/Input/InputText';
-import SelectBox from '../components/Input/SelectBox';
+import SelectBox from '../components/Select/SelectBox';
 import TextArea from '../components/Input/TextArea';
 import Button from '../components/UI/Button';
 import Card from '../components/UI/Card';

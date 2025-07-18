@@ -5,10 +5,11 @@ import React, { useEffect, useMemo, useReducer, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import PrimaryButton from '../components/Buttons/PrimaryButton';
+import SecondaryButton from '../components/Buttons/SecondaryButton';
 import RecipientForm from '../components/Modules/Recipient/RecipientForm';
 import RecipientSummary from '../components/Modules/Recipient/RecipientSummary';
 import SuspendModal from '../components/Modules/Recipient/SuspendModal';
-import Button from '../components/UI/Button';
 import Card from '../components/UI/Card';
 import PageHeader from '../components/UI/PageHeader';
 import { useMerchantStore } from '../store/useMerchantStore';
@@ -282,12 +283,12 @@ const RecipientsPage: React.FC = () => {
                 description='Kelola data penerima subsidi pupuk dan LPG dengan klasifikasi ekonomi'
                 children={
                     <div className='flex gap-3'>
-                        <Button icon={<Download className='w-4 h-4' />} variant='secondary' onClick={() => {}}>
+                        <SecondaryButton Icon={Download} variant='secondary' onClick={() => {}}>
                             Export
-                        </Button>
-                        <Button variant='primary' icon={<Plus className='w-4 h-4' />} onClick={() => handleModalChange('recipientForm', null)}>
+                        </SecondaryButton>
+                        <PrimaryButton Icon={Plus} onClick={() => handleModalChange('recipientForm', null)}>
                             Tambah Penerima
-                        </Button>
+                        </PrimaryButton>
                     </div>
                 }
             />

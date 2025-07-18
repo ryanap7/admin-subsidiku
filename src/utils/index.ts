@@ -1,6 +1,7 @@
 import _ from 'lodash';
-import { Classification } from './enums';
+import { Classification, TransactionStatus } from './enums';
 import { homeOwnershipOptions } from './options';
+import { CheckCircle, Clock, XCircle, FileText } from 'lucide-react';
 
 export const returnInitial = (fullName: string) => {
     const names = fullName.trim().split(' ');
@@ -91,6 +92,19 @@ export const getTransactionStatusColor = (status: string) => {
             return 'bg-red-100 text-red-800';
         default:
             return 'bg-gray-100 text-gray-800';
+    }
+};
+
+export const getTransactionStatusIcon = (status: string) => {
+    switch (status) {
+        case TransactionStatus.Selesai:
+            return CheckCircle;
+        case TransactionStatus.Menunggu:
+            return Clock;
+        case TransactionStatus.Gagal:
+            return XCircle;
+        default:
+            return FileText;
     }
 };
 
