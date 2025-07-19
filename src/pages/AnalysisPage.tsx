@@ -12,7 +12,7 @@ import Button from "../components/UI/Button";
 import Card from "../components/UI/Card";
 import { Recipient } from "../types";
 
-const mockAnalysisData: Record<string, Recipient[]> = {
+const mockAnalysisData = {
   pupuk: [
     {
       id: "P1",
@@ -25,7 +25,7 @@ const mockAnalysisData: Record<string, Recipient[]> = {
       remainingQuota: 15,
       monthlyQuota: 30,
       lastTransaction: "2024-06-12",
-      classification: "poor",
+      classification: "farmer",
       income: 950000,
       familyMembers: 6,
       landSize: 0.15,
@@ -45,7 +45,7 @@ const mockAnalysisData: Record<string, Recipient[]> = {
       remainingQuota: 10,
       monthlyQuota: 25,
       lastTransaction: "2024-06-05",
-      classification: "poor",
+      classification: "farmer",
       income: 850000,
       familyMembers: 5,
       landSize: 0.2,
@@ -65,7 +65,7 @@ const mockAnalysisData: Record<string, Recipient[]> = {
       remainingQuota: 5,
       monthlyQuota: 20,
       lastTransaction: "2024-05-28",
-      classification: "poor",
+      classification: "farmer",
       income: 780000,
       familyMembers: 7,
       landSize: 0.1,
@@ -105,7 +105,7 @@ const mockAnalysisData: Record<string, Recipient[]> = {
       remainingQuota: 12,
       monthlyQuota: 30,
       lastTransaction: "2024-06-10",
-      classification: "poor",
+      classification: "farmer",
       income: 990000,
       familyMembers: 6,
       landSize: 0.25,
@@ -310,7 +310,7 @@ const AnalysisPage: React.FC = () => {
             >
               <option value="">Pilih Jenis Subsidi</option>
               <option value="pupuk">Pupuk</option>
-              <option value="lpg">LPG</option>
+              <option value="lpg">Gas LPG</option>
             </select>
             <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4 pointer-events-none" />
           </div>
@@ -398,7 +398,9 @@ const AnalysisPage: React.FC = () => {
                         </td>
                         <td className="px-6 py-4">
                           <div className="flex items-center">
-                            <Icon className="w-4 h-4 mr-2 text-gray-400" />
+                            {recipient.classification !== "farmer" && (
+                              <Icon className="w-4 h-4 mr-2 text-gray-400" />
+                            )}
                             <span
                               className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getClassificationColor(
                                 recipient.classification
@@ -409,7 +411,7 @@ const AnalysisPage: React.FC = () => {
                           </div>
                         </td>
                         <td className="px-6 py-4 text-sm text-gray-900">
-                          {formatCurrency(recipient.income)}
+                          {formatCurrency(Number(recipient.income))}
                         </td>
                       </tr>
                     );

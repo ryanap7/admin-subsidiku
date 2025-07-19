@@ -1,9 +1,38 @@
 export interface User {
+<<<<<<< HEAD
     id: string;
     name: string;
     email: string;
     role: 'admin' | 'operator' | 'supervisor';
     avatar?: string;
+=======
+  id: string;
+  name: string;
+  email: string;
+  role: "admin" | "operator" | "supervisor";
+  avatar?: string;
+}
+
+export interface Recipient {
+  id: string;
+  nik: string;
+  name: string;
+  address: string;
+  district: string;
+  subsidyType: "pupuk" | "LPG" | "both";
+  status: "active" | "inactive" | "suspended";
+  remainingQuota: number;
+  monthlyQuota: number;
+  lastTransaction?: string;
+  classification: "poor" | "middle" | "rich" | "farmer";
+  income: number;
+  familyMembers: number;
+  landSize?: number;
+  houseOwnership: "owned" | "rented" | "family";
+  vehicleOwnership: string[];
+  bankAccount: boolean;
+  socialSecurityNumber?: string;
+>>>>>>> 0563ab9 (Adjust Analisis Kelayakan)
 }
 
 export interface Agent {
