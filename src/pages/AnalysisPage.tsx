@@ -85,7 +85,7 @@ const mockAnalysisData = {
       remainingQuota: 8,
       monthlyQuota: 25,
       lastTransaction: "2024-06-01",
-      classification: "poor",
+      classification: "farmer",
       income: 920000,
       familyMembers: 4,
       landSize: 0.18,
@@ -236,6 +236,8 @@ const getClassificationLabel = (classification: string) => {
   switch (classification) {
     case "poor":
       return "Kurang Mampu";
+    case "farmer":
+      return "Petani";
     case "middle":
       return "Menengah";
     case "rich":
@@ -248,6 +250,8 @@ const getClassificationLabel = (classification: string) => {
 const getClassificationColor = (classification: string) => {
   switch (classification) {
     case "poor":
+      return "bg-red-100 text-red-800";
+    case "farmer":
       return "bg-red-100 text-red-800";
     case "middle":
       return "bg-yellow-100 text-yellow-800";
