@@ -14,41 +14,41 @@ import TextArea from '../../Input/TextArea';
 import SelectBox from '../../Select/SelectBox';
 import Modal from '../../UI/Modal';
 
- const StockItem = ({ index, register, errors, products, control, onRemove }) => {
-        const selectedProductId = useWatch({
-            control,
-            name: `products.${index}.productId`,
-        });
+const StockItem = ({ index, register, errors, products, control, onRemove }) => {
+    const selectedProductId = useWatch({
+        control,
+        name: `products.${index}.productId`,
+    });
 
-        const unit = products.find((p) => p.id === selectedProductId)?.unit;
+    const unit = products.find((p) => p.id === selectedProductId)?.unit;
 
-        return (
-            <div className='grid grid-cols-2 items-start gap-2'>
-                <SelectBox
-                    // rules={{ required: 'Jenis produk harus dipilih' }}
-                    label='Jenis Produk'
-                    name={`products.${index}.productId`}
-                    register={register}
-                    options={generateOptions(products, 'name', 'id')}
-                    error={errors?.[`products.${index}.productId`]?.message}
-                />
-                <div className='flex gap-2 items-center w-full'>
-                    <div className='w-full'>
-                        <InputNumber
-                            label={`Jumlah produk ${unit ? `(${unit})` : ''}`}
-                            name={`products.${index}.quantity`}
-                            register={register}
-                            placeholder='Masukkan jumlah produk'
-                            error={errors?.[`products.${index}.quantity`]?.message}
-                            // rules={{ required: 'Kapasitas wajib diisi' }}
-                        />
-                    </div>
-                    <Trash2 className='cursor-pointer text-red-500 size-6 mt-5' onClick={() => onRemove(index)} />
+    return (
+        <div className='grid grid-cols-2 items-start gap-2'>
+            <SelectBox
+                // rules={{ required: 'Jenis produk harus dipilih' }}
+                label='Jenis Produk'
+                name={`products.${index}.productId`}
+                register={register}
+                options={generateOptions(products, 'name', 'id')}
+                error={errors?.[`products.${index}.productId`]?.message}
+            />
+            <div className='flex gap-2 items-center w-full'>
+                <div className='w-full'>
+                    <InputNumber
+                        label={`Jumlah produk ${unit ? `(${unit})` : ''}`}
+                        name={`products.${index}.quantity`}
+                        register={register}
+                        placeholder='Masukkan jumlah produk'
+                        error={errors?.[`products.${index}.quantity`]?.message}
+                        // rules={{ required: 'Kapasitas wajib diisi' }}
+                    />
                 </div>
+                <Trash2 className='cursor-pointer text-red-500 size-6 mt-5' onClick={() => onRemove(index)} />
             </div>
-        );
-    };
-    
+        </div>
+    );
+};
+
 export default function MerchantForm({
     isOpen,
     onClose,
@@ -83,8 +83,6 @@ export default function MerchantForm({
         fetchProducts();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
-
-   
 
     const renderStockForm = () => {
         return (

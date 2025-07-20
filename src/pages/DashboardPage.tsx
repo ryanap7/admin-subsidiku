@@ -89,8 +89,7 @@ const DashboardPage: React.FC = () => {
         const percentage = (_.sum(filtered?.map((item: Subsidy) => item.remainingQuota)) / totalSubsidies) * 100;
 
         return Math.round(percentage);
-    }
-    console.log(transactions);
+    } 
 
     return (
         <div className='space-y-6'>

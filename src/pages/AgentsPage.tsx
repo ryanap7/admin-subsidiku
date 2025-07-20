@@ -69,19 +69,25 @@ const AgentsPage: React.FC = () => {
 
     const onSubmit = async (data: Merchant) => {
         const isEdit = Boolean(getValues('id'));
+        const products = data.products.filter((p) => p.productId !== '');
+
+        if (products.length > 0 && _.map(products, 'quantity').includes(0)) {
+            toast.error('Jumlah produk tidak boleh kosong');
+            return;
+        }
 
         try {
             const payload = _.omit(data, ['products', 'createdAt', 'updatedAt', 'code']);
 
             if (isEdit) {
                 await updateMerchant(data.id, payload as Merchant);
-                await addMerchantProduct(data.id, data.products);
+                await addMerchantProduct(data.id, products);
             } else {
                 const response = await createMerchant(payload as Merchant);
 
                 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                 // @ts-ignore
-                await addMerchantProduct(response.id, data.products);
+                await addMerchantProduct(response.id, products);
             }
 
             fetchMerchants();
@@ -89,7 +95,6 @@ const AgentsPage: React.FC = () => {
             reset({});
             toast.success(`Berhasil ${isEdit ? 'memperbarui' : 'menambahkan'} agen`);
         } catch (error) {
-            console.log(error);
             console.error(`${isEdit ? 'Update' : 'Create'} agent failed:`, error);
             toast.error(`Gagal ${isEdit ? 'memperbarui' : 'menambahkan'} agen`);
         }
