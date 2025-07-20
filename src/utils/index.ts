@@ -1,36 +1,7 @@
 import _ from 'lodash';
+import { CheckCircle, Clock, DollarSign, FileText, TrendingDown, TrendingUp, XCircle } from 'lucide-react';
 import { Classification, TransactionStatus } from './enums';
 import { homeOwnershipOptions } from './options';
-import { CheckCircle, Clock, XCircle, FileText } from 'lucide-react';
-
-export const returnInitial = (fullName: string) => {
-    const names = fullName.trim().split(' ');
-    const firstInitial = names[0]?.[0] || '';
-    const lastInitial = names[names.length - 1]?.[0] || '';
-    return `${firstInitial}${lastInitial}`;
-};
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const generateOptions = (data: any[], nameKey: string | string[], valueKey: string, isFormatted: boolean = false) => {
-    if (!Array.isArray(data) || _.isEmpty(data)) return [];
-
-    return data.map((item) => {
-        const label = isFormatted
-            ? Array.isArray(nameKey)
-                ? nameKey.map((key, i) => (i !== 0 ? ` | ${_.get(item, key, '-') ?? '-'}` : _.get(item, key, '-'))).join('')
-                : '-'
-            : _.get(item, nameKey as string, '-');
-
-        return {
-            label,
-            value: _.get(item, valueKey)?.toString(),
-        };
-    }) as { label: string; value: string }[];
-};
-
-export const getHomeOwnershipLabel = (value: string) => {
-    return homeOwnershipOptions.find((option) => option.value === value)?.label || '';
-};
 
 export const getStatusColor = (status: boolean) => {
     switch (status) {
@@ -95,6 +66,19 @@ export const getTransactionStatusColor = (status: string) => {
     }
 };
 
+export const getClassificationIcon = (classification: string) => {
+    switch (classification) {
+        case Classification.Kurang_Mampu:
+            return TrendingDown;
+        case Classification.Menengah:
+            return DollarSign;
+        case Classification.Mampu:
+            return TrendingUp;
+        default:
+            return DollarSign;
+    }
+};
+
 export const getTransactionStatusIcon = (status: string) => {
     switch (status) {
         case TransactionStatus.Selesai:
@@ -106,6 +90,13 @@ export const getTransactionStatusIcon = (status: string) => {
         default:
             return FileText;
     }
+};
+
+export const getStockStatus = (current: number, capacity: number) => {
+    const percentage = (current / capacity) * 100;
+    if (percentage <= 20) return { color: 'bg-red-500', text: 'Stok Rendah' };
+    if (percentage <= 50) return { color: 'bg-yellow-500', text: 'Stok Sedang' };
+    return { color: 'bg-green-500', text: 'Stok Cukup' };
 };
 
 export const formatCurrency = (amount: number) =>
@@ -132,4 +123,33 @@ export const formatDateTime = (dateString: string) => {
         hour: '2-digit',
         minute: '2-digit',
     });
+};
+
+export const returnInitial = (fullName: string) => {
+    const names = fullName.trim().split(' ');
+    const firstInitial = names[0]?.[0] || '';
+    const lastInitial = names[names.length - 1]?.[0] || '';
+    return `${firstInitial}${lastInitial}`;
+};
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const generateOptions = (data: any[], nameKey: string | string[], valueKey: string, isFormatted: boolean = false) => {
+    if (!Array.isArray(data) || _.isEmpty(data)) return [];
+
+    return data.map((item) => {
+        const label = isFormatted
+            ? Array.isArray(nameKey)
+                ? nameKey.map((key, i) => (i !== 0 ? ` | ${_.get(item, key, '-') ?? '-'}` : _.get(item, key, '-'))).join('')
+                : '-'
+            : _.get(item, nameKey as string, '-');
+
+        return {
+            label,
+            value: _.get(item, valueKey)?.toString(),
+        };
+    }) as { label: string; value: string }[];
+};
+
+export const getHomeOwnershipLabel = (value: string) => {
+    return homeOwnershipOptions.find((option) => option.value === value)?.label || '';
 };

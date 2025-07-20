@@ -1,39 +1,34 @@
 import { motion } from 'framer-motion';
 import _ from 'lodash';
-import { ChevronDown, DollarSign, Download, Edit, Eye, Plus, Search, TrendingDown, TrendingUp, UserX } from 'lucide-react';
+import { Download, Edit, Eye, Plus, UserX } from 'lucide-react';
 import React, { useEffect, useMemo, useReducer, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import PrimaryButton from '../components/Buttons/PrimaryButton';
 import SecondaryButton from '../components/Buttons/SecondaryButton';
+import SearchInput from '../components/Input/SearchInput';
 import RecipientForm from '../components/Modules/Recipient/RecipientForm';
 import RecipientSummary from '../components/Modules/Recipient/RecipientSummary';
 import SuspendModal from '../components/Modules/Recipient/SuspendModal';
+import FilterSelection from '../components/Select/FilterSelection';
 import Card from '../components/UI/Card';
 import PageHeader from '../components/UI/PageHeader';
 import { useMerchantStore } from '../store/useMerchantStore';
 import { useProductStore } from '../store/useProductStore';
 import { useRecipientStore } from '../store/useRecipientStore';
 import { Recipient, Subsidy } from '../types';
-import { formatCurrency, getClassificationColor, getClassificationLabel, getRecipientStatusColor, returnInitial } from '../utils';
-import { Classification } from '../utils/enums';
+import {
+    formatCurrency,
+    generateOptions,
+    getClassificationColor,
+    getClassificationIcon,
+    getClassificationLabel,
+    getRecipientStatusColor,
+    returnInitial,
+} from '../utils';
 import { actionCreators, globalReducer, initialState } from '../utils/globalReducer';
-import { classificationOptions } from '../utils/options';
-
-// eslint-disable-next-line react-refresh/only-export-components
-export const getClassificationIcon = (classification: string) => {
-    switch (classification) {
-        case Classification.Kurang_Mampu:
-            return TrendingDown;
-        case Classification.Menengah:
-            return DollarSign;
-        case Classification.Mampu:
-            return TrendingUp;
-        default:
-            return DollarSign;
-    }
-};
+import { classificationOptions, recipientStatus } from '../utils/options';
 
 const RecipientTable: React.FC<{
     recipients: Recipient[];
@@ -60,6 +55,7 @@ const RecipientTable: React.FC<{
                 <tbody className='bg-white divide-y divide-gray-200'>
                     {recipients.map((recipient) => {
                         const ClassificationIcon = getClassificationIcon(recipient.classification);
+
                         return (
                             <motion.tr
                                 key={recipient.id}
@@ -300,60 +296,28 @@ const RecipientsPage: React.FC = () => {
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.6 }}>
                 <Card className='p-6'>
                     <div className='flex flex-col lg:flex-row gap-4'>
-                        <div className='flex-1 relative'>
-                            <Search className='absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5' />
-                            <input
-                                type='text'
-                                placeholder='Cari berdasarkan nama atau NIK...'
-                                value={searchTerm}
-                                onChange={(e) => setSearchTerm(e.target.value)}
-                                className='w-full pl-10 pr-4 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent'
-                            />
-                        </div>
+                        <SearchInput
+                            placeholder='Cari berdasarkan nama atau NIK...'
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                        />
+
                         <div className='flex gap-3'>
-                            <div className='relative'>
-                                <select
-                                    value={filterStatus}
-                                    onChange={(e) => setFilterStatus(e.target.value)}
-                                    className='appearance-none pl-4 pr-12 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent bg-white'
-                                >
-                                    <option value='all'>Semua Status</option>
-                                    <option value='Aktif'>Aktif</option>
-                                    <option value='Tidak Aktif'>Tidak Aktif</option>
-                                    <option value='Ditangguhkan'>Ditangguhkan</option>
-                                </select>
-                                <ChevronDown className='absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4 pointer-events-none' />
-                            </div>
-                            <div className='relative'>
-                                <select
-                                    value={filterSubsidy}
-                                    onChange={(e) => setFilterSubsidy(e.target.value)}
-                                    className='appearance-none pl-4 pr-12 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent bg-white'
-                                >
-                                    <option value='all'>Semua Jenis</option>
-                                    {products.map((product) => (
-                                        <option key={product.id} value={product.name}>
-                                            {product.name}
-                                        </option>
-                                    ))}
-                                </select>
-                                <ChevronDown className='absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4 pointer-events-none' />
-                            </div>
-                            <div className='relative'>
-                                <select
-                                    value={filterClassification}
-                                    onChange={(e) => setFilterClassification(e.target.value)}
-                                    className='appearance-none pl-4 pr-12 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent bg-white'
-                                >
-                                    <option value='all'>Semua Klasifikasi</option>
-                                    {classificationOptions.map((option) => (
-                                        <option key={option.value} value={option.value}>
-                                            {option.label}
-                                        </option>
-                                    ))}
-                                </select>
-                                <ChevronDown className='absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4 pointer-events-none' />
-                            </div>
+                            <FilterSelection
+                                options={[{ value: 'all', label: 'Semua Status' }, ...recipientStatus]}
+                                value={filterStatus}
+                                onChange={(e) => setFilterStatus(e.target.value)}
+                            />
+                            <FilterSelection
+                                options={[{ value: 'all', label: 'Semua Jenis' }, ...generateOptions(products, 'name', 'id')]}
+                                value={filterSubsidy}
+                                onChange={(e) => setFilterSubsidy(e.target.value)}
+                            />
+                            <FilterSelection
+                                options={[{ value: 'all', label: 'Semua Klasifikasi' }, ...classificationOptions]}
+                                value={filterClassification}
+                                onChange={(e) => setFilterClassification(e.target.value)}
+                            />
                         </div>
                     </div>
                 </Card>

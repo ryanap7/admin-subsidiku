@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion';
 import _ from 'lodash';
-import { ArrowLeft, Calendar, CheckCircle, DollarSign, Download, Eye, FileText, MapPin, Package, Phone, User, XCircle } from 'lucide-react';
+import { Calendar, CheckCircle, DollarSign, Download, Eye, FileText, MapPin, Package, Phone, User, XCircle } from 'lucide-react';
 import React, { useEffect, useReducer, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
@@ -10,6 +10,7 @@ import TransactionRecipeModal from '../components/Modules/Transaction/Transactio
 import Button from '../components/UI/Button';
 import Card from '../components/UI/Card';
 import ConfirmModal from '../components/UI/ConfirmModal';
+import PageHeader from '../components/UI/PageHeader';
 import { useTransactionStore } from '../store/useTransactionStore';
 import { Transaction } from '../types';
 import { formatCurrency, formatDateTime, getTransactionStatusColor, getTransactionStatusIcon } from '../utils';
@@ -137,29 +138,11 @@ const TransactionDetailPage: React.FC = () => {
     return (
         <div className='space-y-6'>
             {/* Header */}
-            <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5 }}
-                className='flex items-center justify-between'
-            >
-                <div className='flex items-center space-x-4'>
-                    <Button variant='secondary' onClick={() => navigate('/transactions')}>
-                        <ArrowLeft className='w-4 h-4 mr-2' />
-                        Kembali
-                    </Button>
-                    <div>
-                        <h1 className='text-3xl font-semibold text-gray-800'>
-                            Transaksi <span className='font-bold'>{transaction?.number}</span>
-                        </h1>
-                        <p className='text-gray-600 mt-1'>Detail transaksi subsidi</p>
-                    </div>
-                </div>
+            <PageHeader title='Detail Transaksi' description='Detail transaksi subsidi' path='/transactions'>
                 <div className='flex gap-3'>
-                    <Button variant='secondary' onClick={() => handleModalChange('print', transaction)}>
-                        <FileText className='w-4 h-4 mr-2' />
+                    <SecondaryButton Icon={FileText} onClick={() => handleModalChange('print', transaction)}>
                         Cetak Bukti
-                    </Button>
+                    </SecondaryButton>
                     {transaction?.status === TransactionStatus.Menunggu && (
                         <>
                             <Button variant='success' Icon={CheckCircle} onClick={() => handleModalChange('approve', transaction)}>
@@ -171,7 +154,7 @@ const TransactionDetailPage: React.FC = () => {
                         </>
                     )}
                 </div>
-            </motion.div>
+            </PageHeader>
 
             {/* Status Banner */}
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.1 }}>
@@ -306,10 +289,10 @@ const TransactionDetailPage: React.FC = () => {
                                     <p className='font-medium'>{recipient?.address}</p>
                                 </div>
                                 <div>
-                                    <Button variant='secondary' size='sm' onClick={() => handleNavigation(`/recipient/${recipient?.id}`)}>
+                                    <SecondaryButton size='sm' onClick={() => handleNavigation(`/recipient/${recipient?.id}`)}>
                                         <Eye className='w-4 h-4 mr-2' />
                                         Lihat Detail Penerima
-                                    </Button>
+                                    </SecondaryButton>
                                 </div>
                             </div>
                         </div>

@@ -1,10 +1,11 @@
 import { motion } from 'framer-motion';
-import { Activity, Bell, Database, DollarSign, FileText, Package, Save, Shield, Users } from 'lucide-react';
+import { Bell, Database, DollarSign, FileText, Package, Save, Shield, Users } from 'lucide-react';
 import React, { Fragment, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'react-toastify';
+import PrimaryButton from '../components/Buttons/PrimaryButton';
+import SecondaryButton from '../components/Buttons/SecondaryButton';
 import InputNumber from '../components/Input/InputNumber';
-import Button from '../components/UI/Button';
 import Card from '../components/UI/Card';
 import Modal from '../components/UI/Modal';
 import { useProductStore } from '../store/useProductStore';
@@ -259,6 +260,39 @@ const SettingsPage: React.FC = () => {
         }
     };
 
+    const systemSettings = [
+        {
+            label: 'Backup Database',
+            description: 'Backup terakhir: 15 Januari 2024, 02:00',
+            buttonLabel: 'Backup Sekarang',
+            onClick: handleBackupDatabase,
+        },
+        {
+            label: 'Maintenance Mode',
+            description: 'Aktifkan mode maintenance untuk update sistem',
+            buttonLabel: 'Aktifkan Maintenance',
+            onClick: handleMaintenanceMode,
+        },
+        {
+            label: 'Log Sistem',
+            description: 'Lihat dan unduh log aktivitas sistem',
+            buttonLabel: 'Lihat Log',
+            onClick: () => setShowLogModal(true),
+        },
+        {
+            label: 'Log Aktivitas',
+            description: 'Lihat aktivitas pengguna sistem',
+            buttonLabel: 'Lihat Aktivitas',
+            onClick: () => setShowActivityModal(true),
+        },
+        {
+            label: 'Reset Data',
+            description: 'Reset data testing (hanya untuk development)',
+            buttonLabel: 'Reset Data',
+            onClick: handleResetData,
+        },
+    ];
+
     return (
         <form onSubmit={handleSubmit(handleSave)} className='space-y-6'>
             {/* Header */}
@@ -272,10 +306,9 @@ const SettingsPage: React.FC = () => {
                     <h1 className='text-3xl font-bold text-gray-800'>Pengaturan Sistem</h1>
                     <p className='text-gray-600 mt-1'>Kelola konfigurasi dan parameter sistem subsidi</p>
                 </div>
-                <Button variant='primary' type='submit'>
-                    <Save className='w-4 h-4 mr-2' />
+                <PrimaryButton Icon={Save} type='submit'>
                     Simpan Perubahan
-                </Button>
+                </PrimaryButton>
             </motion.div>
 
             <div className='grid grid-cols-1 lg:grid-cols-4 gap-6'>
@@ -480,9 +513,7 @@ const SettingsPage: React.FC = () => {
                                                 <p className='text-sm text-gray-600'>{roleData.description}</p>
                                                 <p className='text-xs text-gray-500 mt-1'>{roleData.users} pengguna aktif</p>
                                             </div>
-                                            <Button variant='secondary' size='sm'>
-                                                Edit Permission
-                                            </Button>
+                                            <SecondaryButton type='button' size='sm'>Edit Permission</SecondaryButton>
                                         </div>
                                     ))}
                                 </div>
@@ -574,47 +605,15 @@ const SettingsPage: React.FC = () => {
                                 </div>
 
                                 <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
-                                    <Card className='p-4'>
-                                        <h3 className='text-lg font-medium text-gray-800 mb-2'>Backup Database</h3>
-                                        <p className='text-sm text-gray-600 mb-4'>Backup terakhir: 15 Januari 2024, 02:00</p>
-                                        <Button variant='secondary' size='sm' onClick={handleBackupDatabase}>
-                                            Backup Sekarang
-                                        </Button>
-                                    </Card>
-
-                                    <Card className='p-4'>
-                                        <h3 className='text-lg font-medium text-gray-800 mb-2'>Maintenance Mode</h3>
-                                        <p className='text-sm text-gray-600 mb-4'>Aktifkan mode maintenance untuk update sistem</p>
-                                        <Button variant='warning' size='sm' onClick={handleMaintenanceMode}>
-                                            Aktifkan Maintenance
-                                        </Button>
-                                    </Card>
-
-                                    <Card className='p-4'>
-                                        <h3 className='text-lg font-medium text-gray-800 mb-2'>Log Sistem</h3>
-                                        <p className='text-sm text-gray-600 mb-4'>Lihat dan unduh log aktivitas sistem</p>
-                                        <Button variant='secondary' size='sm' onClick={() => setShowLogModal(true)}>
-                                            <FileText className='w-4 h-4 mr-2' />
-                                            Lihat Log
-                                        </Button>
-                                    </Card>
-
-                                    <Card className='p-4'>
-                                        <h3 className='text-lg font-medium text-gray-800 mb-2'>Log Aktivitas</h3>
-                                        <p className='text-sm text-gray-600 mb-4'>Lihat aktivitas pengguna sistem</p>
-                                        <Button variant='secondary' size='sm' onClick={() => setShowActivityModal(true)}>
-                                            <Activity className='w-4 h-4 mr-2' />
-                                            Lihat Aktivitas
-                                        </Button>
-                                    </Card>
-
-                                    <Card className='p-4 md:col-span-2'>
-                                        <h3 className='text-lg font-medium text-gray-800 mb-2'>Reset Data</h3>
-                                        <p className='text-sm text-gray-600 mb-4'>Reset data testing (hanya untuk development)</p>
-                                        <Button variant='danger' size='sm' onClick={handleResetData}>
-                                            Reset Data
-                                        </Button>
-                                    </Card>
+                                    {systemSettings.map((setting, index) => (
+                                        <Card className='p-4' key={index}>
+                                            <h3 className='text-lg font-medium text-gray-800 mb-2'>{setting.label}</h3>
+                                            <p className='text-sm text-gray-600 mb-4'>{setting.description}</p>
+                                            <SecondaryButton type='button' size='sm' onClick={setting.onClick}>
+                                                {setting.buttonLabel}
+                                            </SecondaryButton>
+                                        </Card>
+                                    ))}
                                 </div>
                             </div>
                         )}
@@ -627,10 +626,9 @@ const SettingsPage: React.FC = () => {
                 <div className='space-y-4'>
                     <div className='flex justify-between items-center'>
                         <p className='text-sm text-gray-600'>Menampilkan 100 log terbaru</p>
-                        <Button variant='secondary' size='sm'>
-                            <FileText className='w-4 h-4 mr-2' />
+                        <SecondaryButton type='button' Icon={FileText} size='sm'>
                             Download Log
-                        </Button>
+                        </SecondaryButton>
                     </div>
                     <div className='max-h-96 overflow-y-auto'>
                         <table className='w-full text-sm'>
@@ -664,10 +662,9 @@ const SettingsPage: React.FC = () => {
                 <div className='space-y-4'>
                     <div className='flex justify-between items-center'>
                         <p className='text-sm text-gray-600'>Menampilkan aktivitas 24 jam terakhir</p>
-                        <Button variant='secondary' size='sm'>
-                            <FileText className='w-4 h-4 mr-2' />
+                        <SecondaryButton type='button' Icon={FileText} size='sm'>
                             Download Log
-                        </Button>
+                        </SecondaryButton>
                     </div>
                     <div className='max-h-96 overflow-y-auto'>
                         <div className='space-y-3'>

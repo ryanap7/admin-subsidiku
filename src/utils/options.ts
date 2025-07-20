@@ -1,4 +1,4 @@
-import { Classification, HomeOwnership } from './enums';
+import { Classification, HomeOwnership, TransactionStatus } from './enums';
 
 export const homeOwnershipOptions = [
     { label: 'Milik Sendiri', value: HomeOwnership.Owned },
@@ -17,6 +17,11 @@ export const booleanOptions = [
     { label: 'Tidak', value: 'false' },
 ]; 
 
+export const statusOptions = [
+    { label: 'Aktif', value: 'Aktif' },
+    { label: 'Tidak Aktif', value: 'Tidak Aktif' },
+]; 
+
 export const recipientStatus = [
     { label: 'Aktif', value: 'Aktif' },
     { label: 'Tidak Aktif', value: 'Tidak Aktif' },
@@ -30,3 +35,17 @@ export const recipientStatus = [
     { label: 'Gunung Kidul', value: 'Gunung Kidul' },
     { label: 'Yogyakarta', value: 'Yogyakarta' },
 ]; 
+
+export const dateFilterOptions = [
+    { label: 'Semua Tanggal', value: 'all' },
+    { label: 'Hari Ini', value: 'today' },
+    { label: '7 Hari Terakhir', value: 'week' },
+    { label: '30 Hari Terakhir', value: 'month' },
+];
+
+export const transactionStatusOptions = [
+    { label: 'Selesai', value: TransactionStatus.Selesai },
+    { label: 'Menunggu', value: TransactionStatus.Menunggu },
+    { label: 'Gagal', value: TransactionStatus.Gagal },
+];
+

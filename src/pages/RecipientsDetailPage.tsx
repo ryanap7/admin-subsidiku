@@ -1,27 +1,36 @@
 import { motion } from 'framer-motion';
 import _ from 'lodash';
-import { ArrowLeft, Edit, FileText, MapPin, Plus, UserX } from 'lucide-react';
+import { Edit, FileText, MapPin, Plus, UserX } from 'lucide-react';
 import React, { useEffect, useReducer, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import PrimaryButton from '../components/Buttons/PrimaryButton';
+import SecondaryButton from '../components/Buttons/SecondaryButton';
 import RecipientForm from '../components/Modules/Recipient/RecipientForm';
 import SuspendModal from '../components/Modules/Recipient/SuspendModal';
 import Button from '../components/UI/Button';
 import Card from '../components/UI/Card';
 import GoogleMap from '../components/UI/GoogleMap';
 import Modal from '../components/UI/Modal';
+import PageHeader from '../components/UI/PageHeader';
 import { useMerchantStore } from '../store/useMerchantStore';
 import { useProductStore } from '../store/useProductStore';
 import { useRecipientStore } from '../store/useRecipientStore';
 import { Recipient } from '../types';
-import { formatCurrency, formatDate, getClassificationColor, getClassificationLabel, getHomeOwnershipLabel, getRecipientStatusColor } from '../utils';
+import {
+    formatCurrency,
+    formatDate,
+    getClassificationColor,
+    getClassificationIcon,
+    getClassificationLabel,
+    getHomeOwnershipLabel,
+    getRecipientStatusColor,
+} from '../utils';
 import { actionCreators, globalReducer, initialState } from '../utils/globalReducer';
-import { getClassificationIcon } from './RecipientsPage';
 
 const RecipientsDetailPage: React.FC = () => {
     const { id } = useParams();
-    const navigate = useNavigate();
 
     const [showQuotaModal, setShowQuotaModal] = useState(false);
     const [showMapModal, setShowMapModal] = useState(false);
@@ -130,26 +139,10 @@ const RecipientsDetailPage: React.FC = () => {
     return (
         <div className='space-y-6'>
             {/* Header */}
-            <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5 }}
-                className='flex items-center justify-between'
-            >
-                <div className='flex items-center space-x-4'>
-                    <Button variant='secondary' onClick={() => navigate('/recipients')}>
-                        <ArrowLeft className='w-4 h-4 mr-2' />
-                        Kembali
-                    </Button>
-                    <div>
-                        <h1 className='text-3xl font-bold text-gray-800'>{recipient?.name}</h1>
-                        <p className='text-gray-600 mt-1'>Detail Penerima Subsidi</p>
-                    </div>
-                </div>
+            <PageHeader path='/recipients' title={recipient?.name} description='Detail Penerima Subsidi'>
                 <div className='flex gap-3'>
-                    <Button
+                    <SecondaryButton
                         Icon={Edit}
-                        variant='secondary'
                         onClick={() => {
                             handleModalChange('recipientForm', recipient);
                             reset({
@@ -161,12 +154,12 @@ const RecipientsDetailPage: React.FC = () => {
                         }}
                     >
                         Edit Data
-                    </Button>
+                    </SecondaryButton>
                     <Button Icon={UserX} variant='danger' onClick={() => handleModalChange('suspend', recipient)}>
                         Tangguhkan
                     </Button>
                 </div>
-            </motion.div>
+            </PageHeader>
 
             <div className='grid grid-cols-1 lg:grid-cols-3 gap-6'>
                 {/* Main Info */}
@@ -273,10 +266,9 @@ const RecipientsDetailPage: React.FC = () => {
                     <Card className='p-6'>
                         <div className='flex items-center justify-between mb-6'>
                             <h2 className='text-xl font-semibold text-gray-800'>Riwayat Transaksi</h2>
-                            <Button variant='secondary' size='sm'>
-                                <FileText className='w-4 h-4 mr-2' />
+                            <SecondaryButton Icon={FileText} size='sm'>
                                 Export
-                            </Button>
+                            </SecondaryButton>
                         </div>
                         <div className='overflow-x-auto'>
                             <table className='w-full'>
@@ -346,10 +338,9 @@ const RecipientsDetailPage: React.FC = () => {
                                     </p>
                                 </div>
                             ))}
-                            <Button variant='primary' size='sm' className='w-full' onClick={handleAddQuota}>
-                                <Plus className='w-4 h-4 mr-2' />
+                            <PrimaryButton Icon={Plus} size='sm' className='w-full' onClick={handleAddQuota}>
                                 Tambah Kuota
-                            </Button>
+                            </PrimaryButton>
                         </div>
                     </Card>
 
@@ -416,10 +407,9 @@ const RecipientsDetailPage: React.FC = () => {
                         <h3 className='text-lg font-semibold text-gray-800 mb-4'>Lokasi</h3>
                         <div className='space-y-3'>
                             <p className='text-sm text-gray-600'>{recipient?.address}</p>
-                            <Button variant='secondary' size='sm' className='w-full' onClick={handleViewMap}>
-                                <MapPin className='w-4 h-4 mr-2' />
+                            <SecondaryButton Icon={MapPin} size='sm' className='w-full' onClick={handleViewMap}>
                                 Lihat di Peta
-                            </Button>
+                            </SecondaryButton>
                         </div>
                     </Card>
                 </motion.div>
@@ -477,10 +467,8 @@ const RecipientsDetailPage: React.FC = () => {
                         />
                     </div>
                     <div className='flex justify-end space-x-3 pt-4'>
-                        <Button variant='secondary' onClick={() => setShowQuotaModal(false)}>
-                            Batal
-                        </Button>
-                        <Button variant='primary'>Tambah Kuota</Button>
+                        <SecondaryButton onClick={() => setShowQuotaModal(false)}>Batal</SecondaryButton>
+                        <PrimaryButton>Tambah Kuota</PrimaryButton>
                     </div>
                 </form>
             </Modal>
@@ -504,13 +492,10 @@ const RecipientsDetailPage: React.FC = () => {
                         <h4 className='font-medium text-blue-800 mb-2'>{recipient?.name}</h4>
                         <p className='text-sm text-blue-700'>{recipient?.address}</p>
                         <div className='mt-3 flex gap-2'>
-                            <Button variant='secondary' size='sm'>
-                                <MapPin className='w-4 h-4 mr-2' />
+                            <SecondaryButton Icon={MapPin} size='sm'>
                                 Buka di Google Maps
-                            </Button>
-                            <Button variant='secondary' size='sm'>
-                                Dapatkan Arah
-                            </Button>
+                            </SecondaryButton>
+                            <SecondaryButton size='sm'>Dapatkan Arah</SecondaryButton>
                         </div>
                     </div>
                 </div>
