@@ -1,4 +1,8 @@
-import React from 'react';
+import { Plus, Trash2 } from 'lucide-react';
+import React, { useEffect } from 'react';
+import { useFieldArray, useWatch } from 'react-hook-form';
+import { useProductStore } from '../../../store/useProductStore';
+import { generateOptions } from '../../../utils';
 import { districtOptions } from '../../../utils/options';
 import PrimaryButton from '../../Buttons/PrimaryButton';
 import SecondaryButton from '../../Buttons/SecondaryButton';
@@ -10,6 +14,41 @@ import TextArea from '../../Input/TextArea';
 import SelectBox from '../../Select/SelectBox';
 import Modal from '../../UI/Modal';
 
+ const StockItem = ({ index, register, errors, products, control, onRemove }) => {
+        const selectedProductId = useWatch({
+            control,
+            name: `products.${index}.productId`,
+        });
+
+        const unit = products.find((p) => p.id === selectedProductId)?.unit;
+
+        return (
+            <div className='grid grid-cols-2 items-start gap-2'>
+                <SelectBox
+                    rules={{ required: 'Jenis produk harus dipilih' }}
+                    label='Jenis Produk'
+                    name={`products.${index}.productId`}
+                    register={register}
+                    options={generateOptions(products, 'name', 'id')}
+                    error={errors?.[`products.${index}.productId`]?.message}
+                />
+                <div className='flex gap-2 items-center w-full'>
+                    <div className='w-full'>
+                        <InputNumber
+                            label={`Jumlah produk ${unit ? `(${unit})` : ''}`}
+                            name={`products.${index}.quantity`}
+                            register={register}
+                            placeholder='Masukkan jumlah produk'
+                            error={errors?.[`products.${index}.quantity`]?.message}
+                            rules={{ required: 'Kapasitas wajib diisi' }}
+                        />
+                    </div>
+                    <Trash2 className='cursor-pointer text-red-500 size-6 mt-5' onClick={() => onRemove(index)} />
+                </div>
+            </div>
+        );
+    };
+    
 export default function MerchantForm({
     isOpen,
     onClose,
@@ -26,10 +65,53 @@ export default function MerchantForm({
     form: any;
     isEdit?: boolean;
 }) {
+    const { fetchProducts, products } = useProductStore();
+
     const {
         register,
+        getValues,
+        control,
         formState: { errors },
     } = form;
+
+    const { fields, remove, append } = useFieldArray({
+        control,
+        name: 'products',
+    });
+
+    useEffect(() => {
+        fetchProducts();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+
+   
+
+    const renderStockForm = () => {
+        return (
+            <>
+                <p className='pt-6 font-semibold'>Stok</p>
+                <div className='flex flex-col gap-4'>
+                    {fields.map((field, index) => (
+                        <StockItem
+                            key={field.id}
+                            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                            // @ts-ignore
+                            field={field}
+                            index={index}
+                            register={register}
+                            errors={errors}
+                            products={products}
+                            control={control}
+                            onRemove={remove}
+                        />
+                    ))}
+                    <SecondaryButton Icon={Plus} className='w-max mx-auto mt-4' type='button' onClick={() => append({ productId: '', quantity: 0 })}>
+                        Tambah Stok
+                    </SecondaryButton>
+                </div>
+            </>
+        );
+    };
 
     return (
         <Modal isOpen={isOpen} onClose={onClose} title={isEdit ? 'Edit Agen' : 'Tambah Agen Baru'} size='lg'>
@@ -108,8 +190,8 @@ export default function MerchantForm({
                         rules={{
                             required: 'Latitude wajib diisi',
                             valueAsNumber: true,
-                            min: { value: -90, message: 'Latitude minimal -90' },
-                            max: { value: 90, message: 'Latitude maksimal 90' },
+                            // min: { value: -90, message: 'Latitude minimal -90' },
+                            // max: { value: 90, message: 'Latitude maksimal 90' },
                         }}
                         placeholder='Contoh: -6.21462'
                         error={errors.lat?.message}
@@ -126,8 +208,8 @@ export default function MerchantForm({
                         rules={{
                             required: 'Longitude wajib diisi',
                             valueAsNumber: true,
-                            min: { value: -180, message: 'Longitude minimal -180' },
-                            max: { value: 180, message: 'Longitude maksimal 180' },
+                            // min: { value: -180, message: 'Longitude minimal -180' },
+                            // max: { value: 180, message: 'Longitude maksimal 180' },
                         }}
                         error={errors.lng?.message}
                     />
@@ -142,7 +224,19 @@ export default function MerchantForm({
                     rules={{ required: 'Kapasitas wajib diisi' }}
                 />
 
+                {getValues('id') && (
+                    <InputNumber
+                        label='Saldo (Rp)'
+                        name='balance'
+                        register={register}
+                        placeholder='Masukkan saldo'
+                        error={errors.balance?.message}
+                        rules={{ required: 'Saldo wajib diisi' }}
+                    />
+                )}
+
                 <InputPassword
+                    key={'password'}
                     label='Password'
                     name='password'
                     register={register}
@@ -152,6 +246,8 @@ export default function MerchantForm({
                 />
 
                 <Checkbox label='Aktif' name='status' register={register} />
+
+                {isEdit && renderStockForm()}
 
                 <div className='flex justify-end space-x-3 pt-4'>
                     <SecondaryButton type='button' onClick={onCancel}>

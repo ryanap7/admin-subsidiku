@@ -22,6 +22,11 @@ export const statusOptions = [
     { label: 'Tidak Aktif', value: 'Tidak Aktif' },
 ]; 
 
+export const booleanStatusOptions = [
+    { label: 'Aktif', value: 'true' },
+    { label: 'Tidak Aktif', value: 'false' },
+]; 
+
 export const recipientStatus = [
     { label: 'Aktif', value: 'Aktif' },
     { label: 'Tidak Aktif', value: 'Tidak_Aktif' },

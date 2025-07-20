@@ -16,8 +16,8 @@ import ConfirmModal from '../components/UI/ConfirmModal';
 import PageHeader from '../components/UI/PageHeader';
 import { useMerchantStore } from '../store/useMerchantStore';
 import { Merchant } from '../types';
-import { getStatusColor, getStockStatus } from '../utils';
-import { districtOptions, statusOptions } from '../utils/options';
+import { formatCurrency, getStatusColor, getStockStatus } from '../utils';
+import { booleanStatusOptions, districtOptions } from '../utils/options';
 
 const AgentsPage: React.FC = () => {
     const navigate = useNavigate();
@@ -30,9 +30,13 @@ const AgentsPage: React.FC = () => {
     const [showConfirmDelete, setShowConfirmDelete] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
 
-    const { merchants, fetchMerchants, createMerchant, updateMerchant, deleteMerchant } = useMerchantStore();
+    const { merchants, fetchMerchants, createMerchant, updateMerchant, deleteMerchant, getMerchant, addMerchantProduct } = useMerchantStore();
 
-    const form = useForm<Merchant>({});
+    const form = useForm<Merchant>({
+        defaultValues: {
+            products: [{ productId: '', quantity: 0 }],
+        },
+    });
     const { handleSubmit, reset, getValues } = form;
 
     useEffect(() => {
@@ -47,29 +51,43 @@ const AgentsPage: React.FC = () => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [showAddModal]);
 
+    const getMerchantDetail = async (id: string) => {
+        try {
+            const response = await getMerchant(id as string);
+
+            reset({
+                ...response, 
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore
+                products: [{ productId: '', quantity: 0 }],
+            });
+            setShowAddModal(true);
+        } catch (error) {
+            console.error('Failed to fetch agent:', error);
+        }
+    };
+
     const onSubmit = async (data: Merchant) => {
-        if (getValues('id')) {
-            try {
-                await updateMerchant(data.id, data);
-                fetchMerchants();
-                setShowAddModal(false);
-                reset({});
-                toast.success('Berhasil memperbarui agen');
-            } catch (error) {
-                console.error('Failed to update agent:', error);
-                toast.error('Gagal memperbarui agen');
+        const isEdit = Boolean(getValues('id'));
+
+        try {
+            const payload = _.omit(data, ['products', 'createdAt', 'updatedAt', 'code']);
+            const action = isEdit ? updateMerchant(data.id, payload as Merchant) : createMerchant(payload as Merchant);
+
+            await action;
+
+            if (isEdit) {
+                await addMerchantProduct(data.id, data.products);
             }
-        } else {
-            try {
-                await createMerchant(data);
-                fetchMerchants();
-                setShowAddModal(false);
-                toast.success('Berhasil menambahkan agen');
-                reset({});
-            } catch (error) {
-                console.error('Failed to add new agent:', error);
-                toast.error('Gagal menambahkan agen');
-            }
+
+            fetchMerchants();
+            setShowAddModal(false);
+            reset({});
+            toast.success(`Berhasil ${isEdit ? 'memperbarui' : 'menambahkan'} agen`);
+        } catch (error) {
+            console.log(error);
+            console.error(`${isEdit ? 'Update' : 'Create'} agent failed:`, error);
+            toast.error(`Gagal ${isEdit ? 'memperbarui' : 'menambahkan'} agen`);
         }
     };
 
@@ -84,11 +102,6 @@ const AgentsPage: React.FC = () => {
 
     const handleViewDetails = (agent: Merchant) => {
         navigate(`/agents/${agent.id}`);
-    };
-
-    const handleEditAgent = (agent: Merchant) => {
-        reset(agent);
-        setShowAddModal(true);
     };
 
     const handleViewMap = () => {
@@ -146,7 +159,7 @@ const AgentsPage: React.FC = () => {
 
                         <div className='flex gap-3'>
                             <FilterSelection
-                                options={[{ value: 'all', label: 'Semua Status' }, ...statusOptions]}
+                                options={[{ value: 'all', label: 'Semua Status' }, ...booleanStatusOptions]}
                                 value={String(filterStatus)}
                                 onChange={(e) => setFilterStatus(e.target.value === 'all' ? 'all' : e.target.value === 'true' ? true : false)}
                             />
@@ -172,6 +185,7 @@ const AgentsPage: React.FC = () => {
                                     <th className='px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'>Kecamatan</th>
                                     <th className='px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'>Status</th>
                                     <th className='px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'>Stok</th>
+                                    <th className='px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'>Saldo</th>
                                     <th className='px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'>Kapasitas</th>
                                     <th className='px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'>Aksi</th>
                                 </tr>
@@ -232,6 +246,9 @@ const AgentsPage: React.FC = () => {
                                                     </div>
                                                 ))}
                                             </td>
+                                            <td className='px-6 py-4 whitespace-nowrap text-sm text-gray-900'>
+                                                {formatCurrency(Number(agent.balance) || 0)}
+                                            </td>
                                             <td className='px-6 py-4 whitespace-nowrap text-sm text-gray-900'>{agent.maxCapacity}</td>
                                             <td className='px-6 py-4 whitespace-nowrap text-sm font-medium'>
                                                 <div className='flex space-x-2'>
@@ -243,7 +260,7 @@ const AgentsPage: React.FC = () => {
                                                         <Eye className='w-4 h-4' />
                                                     </button>
                                                     <button
-                                                        onClick={() => handleEditAgent(agent)}
+                                                        onClick={() => getMerchantDetail(agent.id)}
                                                         className='text-green-600 hover:text-green-800'
                                                         title='Edit Data'
                                                     >
@@ -288,6 +305,7 @@ const AgentsPage: React.FC = () => {
                     setShowAddModal(false);
                     setSelectedAgent(null);
                 }}
+                isEdit={getValues('id') ? true : false}
             />
 
             <ConfirmModal

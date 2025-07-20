@@ -72,6 +72,7 @@ const AgentDetailPage: React.FC = () => {
 
         try {
             await updateMerchant(agent?.id as string, data);
+
             getAgent();
             toast.success(`Berhasil memperbarui agen ${dataType}`);
             reset({});
@@ -88,6 +89,7 @@ const AgentDetailPage: React.FC = () => {
         dispatch(actionCreators.setLoading(true));
         try {
             await addMerchantProduct(agent?.id as string, [data]);
+            
             getAgent();
             toast.success('Berhasil menambah stok');
             handleModalChange('', null);
@@ -584,8 +586,8 @@ const AgentDetailPage: React.FC = () => {
                             rules={{
                                 required: 'Latitude wajib diisi',
                                 valueAsNumber: true,
-                                min: { value: -90, message: 'Latitude minimal -90' },
-                                max: { value: 90, message: 'Latitude maksimal 90' },
+                                // min: { value: -90, message: 'Latitude minimal -90' },
+                                // max: { value: 90, message: 'Latitude maksimal 90' },
                             }}
                             error={errors.lat?.message}
                         />
@@ -601,8 +603,8 @@ const AgentDetailPage: React.FC = () => {
                             rules={{
                                 required: 'Longitude wajib diisi',
                                 valueAsNumber: true,
-                                min: { value: -180, message: 'Longitude minimal -180' },
-                                max: { value: 180, message: 'Longitude maksimal 180' },
+                                // min: { value: -180, message: 'Longitude minimal -180' },
+                                // max: { value: 180, message: 'Longitude maksimal 180' },
                             }}
                             error={errors.lng?.message}
                         />

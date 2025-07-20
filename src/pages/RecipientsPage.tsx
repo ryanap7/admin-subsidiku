@@ -184,7 +184,7 @@ const RecipientsPage: React.FC = () => {
 
     const [state, dispatch] = useReducer(globalReducer, initialState);
 
-    const { recipients, fetchRecipients, createRecipient, updateRecipient, deleteRecipient } = useRecipientStore();
+    const { recipients, fetchRecipients, createRecipient, updateRecipient, deleteRecipient, getRecipient } = useRecipientStore();
     const { products, fetchProducts } = useProductStore();
     const { merchants, fetchMerchants } = useMerchantStore();
 
@@ -205,6 +205,22 @@ const RecipientsPage: React.FC = () => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [state.openModal]);
 
+    const getRecipientDetail = async (id: string) => {
+        try {
+            const response = await getRecipient(id as string);
+            handleModalChange('recipientForm', null);
+            reset({
+                ...response,
+                haveBankAccount: String(response?.haveBankAccount),
+                merchantId:  response?.merchantId ?? response?.merchant?.id,
+                subsidies: response?.subsidies.map((s) => s.product.id),
+            });
+        } catch (error) {
+            console.error('Failed to fetch recipient:', error);
+            toast.error('Gagal mengambil data penerima');
+        }
+    };
+
     const onSubmit = async (data: Recipient & { subsidies: string[] }) => {
         dispatch(actionCreators.setLoading(true));
         try {
@@ -214,7 +230,7 @@ const RecipientsPage: React.FC = () => {
             const payload = _.omit(data, removedKeys);
 
             if (getValues('id')) {
-                await updateRecipient(data.id, _.omit(data, 'subsidies') as Recipient);
+                await updateRecipient(data.id, _.omit(payload, 'subsidies') as Recipient);
 
                 toast.success('Berhasil memperbarui data');
             } else {
@@ -355,15 +371,7 @@ const RecipientsPage: React.FC = () => {
                 <RecipientTable
                     recipients={filteredRecipients}
                     onView={handleViewDetails}
-                    onEdit={(recipient) => {
-                        handleModalChange('recipientForm', null);
-                        reset({
-                            ...recipient,
-                            haveBankAccount: String(recipient.haveBankAccount),
-                            merchantId: recipient.merchant?.id,
-                            subsidies: recipient.subsidies.map((s) => s.product.id),
-                        });
-                    }}
+                    onEdit={(recipient) => getRecipientDetail(recipient.id)}
                     onDelete={(recipient) => handleModalChange('delete', recipient)}
                     onSuspend={(recipient) => handleModalChange('suspend', recipient)}
                 />

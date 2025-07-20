@@ -18,7 +18,7 @@ export default function InputNumber({
     ...rest
 }: InputNumberProps) {
     const [displayValue, setDisplayValue] = useState<string>('');
-
+ 
     const formatWithThousandSeparator = (value: string) => {
         if (!value) return '';
         const [integer, decimal] = value.split('.');
@@ -30,6 +30,7 @@ export default function InputNumber({
         if (!val || val === '') return null;
         const normalized = String(val)?.replace(/,/g, '');
         const num = parseFloat(normalized);
+
         return isNaN(num) ? null : num;
     };
 

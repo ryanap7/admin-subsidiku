@@ -32,8 +32,8 @@ const UpdateLocationModal: React.FC<{
                         rules={{
                             required: 'Latitude wajib diisi',
                             valueAsNumber: true,
-                            min: { value: -90, message: 'Latitude minimal -90' },
-                            max: { value: 90, message: 'Latitude maksimal 90' },
+                            // min: { value: -90, message: 'Latitude minimal -90' },
+                            // max: { value: 90, message: 'Latitude maksimal 90' },
                         }}
                         error={errors.lat?.message}
                     />
@@ -49,8 +49,8 @@ const UpdateLocationModal: React.FC<{
                         rules={{
                             required: 'Longitude wajib diisi',
                             valueAsNumber: true,
-                            min: { value: -180, message: 'Longitude minimal -180' },
-                            max: { value: 180, message: 'Longitude maksimal 180' },
+                            // min: { value: -180, message: 'Longitude minimal -180' },
+                            // max: { value: 180, message: 'Longitude maksimal 180' },
                         }}
                         error={errors.lng?.message}
                     />

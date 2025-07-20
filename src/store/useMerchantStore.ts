@@ -137,15 +137,7 @@ export const useMerchantStore = create<MerchantStore>((set) => ({
         set({ loading: true });
         try {
             const response = await API.addMerchantProduct(merchantId, data);
-            const addedProducts = response.data.data ?? [];
-            set((state) => ({
-                merchants: state.merchants.map((merchant) =>
-                    merchant.id === merchantId
-                        ? { ...merchant, products: [...merchant.products, ...addedProducts] }
-                        : merchant
-                ),
-            }));
-            return addedProducts;
+            return response.data.data || response.data;
         } catch (error: unknown) {
             console.error('Failed to add merchant product:', error);
             if (error instanceof Error && 'response' in error) {
