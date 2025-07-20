@@ -25,7 +25,7 @@ import Modal from '../../UI/Modal';
         return (
             <div className='grid grid-cols-2 items-start gap-2'>
                 <SelectBox
-                    rules={{ required: 'Jenis produk harus dipilih' }}
+                    // rules={{ required: 'Jenis produk harus dipilih' }}
                     label='Jenis Produk'
                     name={`products.${index}.productId`}
                     register={register}
@@ -40,7 +40,7 @@ import Modal from '../../UI/Modal';
                             register={register}
                             placeholder='Masukkan jumlah produk'
                             error={errors?.[`products.${index}.quantity`]?.message}
-                            rules={{ required: 'Kapasitas wajib diisi' }}
+                            // rules={{ required: 'Kapasitas wajib diisi' }}
                         />
                     </div>
                     <Trash2 className='cursor-pointer text-red-500 size-6 mt-5' onClick={() => onRemove(index)} />
