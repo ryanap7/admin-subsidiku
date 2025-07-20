@@ -107,13 +107,13 @@ const AgentsPage: React.FC = () => {
             await deleteMerchant(selectedAgent.id);
             toast.success('Agen berhasil dihapus');
             fetchMerchants();
+            setShowConfirmDelete(false);
+            setSelectedAgent(null);
             // eslint-disable-next-line @typescript-eslint/no-unused-vars
         } catch (error) {
             toast.error('Gagal menghapus agen');
         } finally {
             setIsLoading(false);
-            setShowConfirmDelete(false);
-            setSelectedAgent(null);
         }
     };
 
@@ -293,7 +293,7 @@ const AgentsPage: React.FC = () => {
             <ConfirmModal
                 isOpen={showConfirmDelete}
                 title='Hapus Agen'
-                message={`Apakah kamu yakin ingin menghapus agen "${selectedAgent?.name}"? Tindakan ini tidak bisa dibatalkan.`}
+                message={`Apakah Anda yakin ingin menghapus agen "${selectedAgent?.name}"? Tindakan ini tidak bisa dibatalkan.`}
                 confirmText='Ya, Hapus'
                 cancelText='Batal'
                 onClose={() => {

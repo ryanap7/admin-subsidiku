@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import { CheckCircle, Clock, DollarSign, FileText, TrendingDown, TrendingUp, XCircle } from 'lucide-react';
 import { Classification, TransactionStatus } from './enums';
-import { homeOwnershipOptions } from './options';
+import { homeOwnershipOptions, recipientStatus } from './options';
 
 export const getStatusColor = (status: boolean) => {
     switch (status) {
@@ -46,7 +46,7 @@ export const getRecipientStatusColor = (status: string) => {
             return 'bg-green-100 text-green-800';
         case 'Ditangguhkan':
             return 'bg-gray-100 text-gray-800';
-        case 'Tidak Aktif':
+        case 'Tidak_Aktif':
             return 'bg-red-100 text-red-800';
         default:
             return 'bg-gray-100 text-gray-800';
@@ -65,6 +65,10 @@ export const getTransactionStatusColor = (status: string) => {
             return 'bg-gray-100 text-gray-800';
     }
 };
+
+export const getRecipientStatusLabel = (status: string) => {
+    return recipientStatus.find((item) => item.value === status)?.label || '-';
+}
 
 export const getClassificationIcon = (classification: string) => {
     switch (classification) {

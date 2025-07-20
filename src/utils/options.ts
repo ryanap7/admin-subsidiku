@@ -24,7 +24,7 @@ export const statusOptions = [
 
 export const recipientStatus = [
     { label: 'Aktif', value: 'Aktif' },
-    { label: 'Tidak Aktif', value: 'Tidak Aktif' },
+    { label: 'Tidak Aktif', value: 'Tidak_Aktif' },
     { label: 'Ditangguhkan', value: 'Ditangguhkan' },
 ]; 
 

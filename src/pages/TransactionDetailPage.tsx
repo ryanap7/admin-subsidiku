@@ -438,7 +438,7 @@ const TransactionDetailPage: React.FC = () => {
                 title={`${state.modalType === 'approve' ? 'Setujui ' : 'Tolak '} Transaksi`}
                 message={
                     <span>
-                        Apakah kamu yakin ingin {state.modalType === 'approve' ? 'menyetujui' : 'menolak'} transaksi{' '}
+                        Apakah Anda yakin ingin {state.modalType === 'approve' ? 'menyetujui' : 'menolak'} transaksi{' '}
                         <strong>{transaction?.number}</strong>? Tindakan ini tidak bisa dibatalkan.
                     </span>
                 }

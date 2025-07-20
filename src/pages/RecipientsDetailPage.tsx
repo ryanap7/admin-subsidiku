@@ -26,6 +26,7 @@ import {
     getClassificationLabel,
     getHomeOwnershipLabel,
     getRecipientStatusColor,
+    getRecipientStatusLabel,
 } from '../utils';
 import { actionCreators, globalReducer, initialState } from '../utils/globalReducer';
 
@@ -203,7 +204,7 @@ const RecipientsDetailPage: React.FC = () => {
                                             recipient?.status
                                         )}`}
                                     >
-                                        {recipient?.status}
+                                        {getRecipientStatusLabel(recipient?.status)}
                                     </span>
                                 </div>
                                 <div>

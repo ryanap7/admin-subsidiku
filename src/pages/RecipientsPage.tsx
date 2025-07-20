@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion';
 import _ from 'lodash';
-import { Download, Edit, Eye, Plus, UserX } from 'lucide-react';
+import { Download, Edit, Eye, Plus, Trash2, UserX } from 'lucide-react';
 import React, { useEffect, useMemo, useReducer, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
@@ -13,6 +13,7 @@ import RecipientSummary from '../components/Modules/Recipient/RecipientSummary';
 import SuspendModal from '../components/Modules/Recipient/SuspendModal';
 import FilterSelection from '../components/Select/FilterSelection';
 import Card from '../components/UI/Card';
+import ConfirmModal from '../components/UI/ConfirmModal';
 import PageHeader from '../components/UI/PageHeader';
 import { useMerchantStore } from '../store/useMerchantStore';
 import { useProductStore } from '../store/useProductStore';
@@ -25,6 +26,7 @@ import {
     getClassificationIcon,
     getClassificationLabel,
     getRecipientStatusColor,
+    getRecipientStatusLabel,
     returnInitial,
 } from '../utils';
 import { actionCreators, globalReducer, initialState } from '../utils/globalReducer';
@@ -35,7 +37,8 @@ const RecipientTable: React.FC<{
     onView: (r: Recipient) => void;
     onEdit: (r: Recipient) => void;
     onSuspend: (r: Recipient) => void;
-}> = ({ recipients, onView, onEdit, onSuspend }) => (
+    onDelete: (r: Recipient) => void;
+}> = ({ recipients, onView, onEdit, onSuspend, onDelete }) => (
     <Card className='overflow-hidden'>
         <div className='overflow-x-auto'>
             <table className='w-full'>
@@ -47,6 +50,7 @@ const RecipientTable: React.FC<{
                         <th className='px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'>Klasifikasi</th>
                         <th className='px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'>Pendapatan</th>
                         <th className='px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'>Jenis Subsidi</th>
+                        <th className='px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'>Saldo</th>
                         <th className='px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'>Status</th>
                         <th className='px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'>Kuota</th>
                         <th className='px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'>Aksi</th>
@@ -106,13 +110,16 @@ const RecipientTable: React.FC<{
                                           ))
                                         : '-'}
                                 </td>
+                                <td className='px-6 py-4 whitespace-nowrap text-sm text-gray-900'>
+                                    {formatCurrency(Number(recipient.balance) || 0)}
+                                </td>
                                 <td className='px-6 py-4 whitespace-nowrap'>
                                     <span
                                         className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getRecipientStatusColor(
                                             recipient.status
                                         )}`}
                                     >
-                                        {recipient.status}
+                                        {getRecipientStatusLabel(recipient.status)}
                                     </span>
                                 </td>
                                 <td className='px-6 py-4 whitespace-nowrap text-sm text-gray-900'>
@@ -150,6 +157,13 @@ const RecipientTable: React.FC<{
                                                 <UserX className='w-4 h-4' />
                                             </button>
                                         )}
+                                        <button
+                                            onClick={() => onDelete(recipient)}
+                                            className='text-red-600 hover:text-red-800 transition-colors'
+                                            title='Hapus Data'
+                                        >
+                                            <Trash2 className='w-4 h-4' />
+                                        </button>
                                     </div>
                                 </td>
                             </motion.tr>
@@ -170,7 +184,7 @@ const RecipientsPage: React.FC = () => {
 
     const [state, dispatch] = useReducer(globalReducer, initialState);
 
-    const { recipients, fetchRecipients, createRecipient, updateRecipient } = useRecipientStore();
+    const { recipients, fetchRecipients, createRecipient, updateRecipient, deleteRecipient } = useRecipientStore();
     const { products, fetchProducts } = useProductStore();
     const { merchants, fetchMerchants } = useMerchantStore();
 
@@ -196,11 +210,11 @@ const RecipientsPage: React.FC = () => {
         try {
             data['haveBankAccount'] = data.haveBankAccount === 'true';
 
-            const removedKeys = ['id', 'balance', 'avatar', 'createdAt', 'updatedAt', 'merchant', 'subsidies', 'transactions', '_count'];
+            const removedKeys = ['id', 'balance', 'avatar', 'createdAt', 'updatedAt', 'merchant', 'transactions', '_count'];
             const payload = _.omit(data, removedKeys);
 
             if (getValues('id')) {
-                await updateRecipient(data.id, payload as Recipient);
+                await updateRecipient(data.id, _.omit(data, 'subsidies') as Recipient);
 
                 toast.success('Berhasil memperbarui data');
             } else {
@@ -243,6 +257,19 @@ const RecipientsPage: React.FC = () => {
         } catch (error) {
             console.error('Failed to suspend recipient:', error);
             toast.error('Penerima subsidi gagal ditangguhkan');
+        }
+    };
+
+    const onDeleteRecipient = async () => {
+        if (!state.modalData) return;
+        try {
+            await deleteRecipient(state.modalData.id);
+            toast.success('Penerima subsidi berhasil dihapus');
+            fetchRecipients();
+            handleModalChange('', null);
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        } catch (error) {
+            toast.error('Gagal menghapus penerima subsidi');
         }
     };
 
@@ -337,6 +364,7 @@ const RecipientsPage: React.FC = () => {
                             subsidies: recipient.subsidies.map((s) => s.product.id),
                         });
                     }}
+                    onDelete={(recipient) => handleModalChange('delete', recipient)}
                     onSuspend={(recipient) => handleModalChange('suspend', recipient)}
                 />
             </motion.div>
@@ -363,6 +391,23 @@ const RecipientsPage: React.FC = () => {
                 onClose={() => handleModalChange('', null)}
                 onSuspend={onSuspendRecipient}
                 selectedRecipient={state.modalData}
+            />
+
+            {/* Delete Confirm */}
+            <ConfirmModal
+                isOpen={state.modalType === 'delete' && state.openModal}
+                title='Hapus Penerima Subsidi'
+                message={
+                    <span>
+                        Apakah Anda yakin ingin menghapus <strong>{state.modalData?.name}</strong> sebagai penerima subsidi? Tindakan ini tidak bisa
+                        dibatalkan.
+                    </span>
+                }
+                confirmText='Ya, Hapus'
+                cancelText='Batal'
+                onClose={() => handleModalChange('', null)}
+                onConfirm={onDeleteRecipient}
+                loading={false}
             />
         </div>
     );
