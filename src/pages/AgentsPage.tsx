@@ -71,7 +71,9 @@ const AgentsPage: React.FC = () => {
         const isEdit = Boolean(getValues('id'));
         const products = data.products.filter((p) => p.productId !== '');
 
-        if (products.length > 0 && _.map(products, 'quantity').includes(0)) {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        if (products.length > 0 && products.find((p) => _.isEmpty(p.quantity))) {
             toast.error('Jumlah produk tidak boleh kosong');
             return;
         }
