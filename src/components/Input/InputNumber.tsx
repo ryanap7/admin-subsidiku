@@ -14,9 +14,10 @@ export default function InputNumber({
     error,
     rules,
     helperText,
-    onChange,
+    onChange, 
     ...rest
 }: InputNumberProps) {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [displayValue, setDisplayValue] = useState<string>('');
  
     const formatWithThousandSeparator = (value: string) => {
@@ -83,7 +84,7 @@ export default function InputNumber({
                     inputMode='decimal'
                     pattern='[0-9.,]*'
                     placeholder={placeholder}
-                    value={displayValue}
+                    // value={displayValue}
                     onKeyDown={handleKeyDown}
                     className={`
                         w-full px-3 py-2 border rounded-xl focus:outline-none focus:ring-2 focus:border-transparent

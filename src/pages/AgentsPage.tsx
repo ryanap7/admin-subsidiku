@@ -56,7 +56,7 @@ const AgentsPage: React.FC = () => {
             const response = await getMerchant(id as string);
 
             reset({
-                ...response, 
+                ...response,
                 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                 // @ts-ignore
                 products: [{ productId: '', quantity: 0 }],
@@ -72,12 +72,16 @@ const AgentsPage: React.FC = () => {
 
         try {
             const payload = _.omit(data, ['products', 'createdAt', 'updatedAt', 'code']);
-            const action = isEdit ? updateMerchant(data.id, payload as Merchant) : createMerchant(payload as Merchant);
-
-            await action;
 
             if (isEdit) {
+                await updateMerchant(data.id, payload as Merchant);
                 await addMerchantProduct(data.id, data.products);
+            } else {
+                const response = await createMerchant(payload as Merchant);
+
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore
+                await addMerchantProduct(response.id, data.products);
             }
 
             fetchMerchants();

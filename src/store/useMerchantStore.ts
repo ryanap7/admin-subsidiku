@@ -29,6 +29,7 @@ export const useMerchantStore = create<MerchantStore>((set) => ({
         try {
             const response = await API.getMerchants({...params, limit: 100});
             set({ merchants: response.data.data || response.data });
+            return response.data.data || response.data;
         } catch (error: unknown) {
             console.error('Failed to fetch merchants:', error);
             if (error instanceof Error && 'response' in error) {

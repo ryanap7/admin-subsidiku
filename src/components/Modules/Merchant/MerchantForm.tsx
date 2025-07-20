@@ -247,7 +247,7 @@ export default function MerchantForm({
 
                 <Checkbox label='Aktif' name='status' register={register} />
 
-                {isEdit && renderStockForm()}
+                {renderStockForm()}
 
                 <div className='flex justify-end space-x-3 pt-4'>
                     <SecondaryButton type='button' onClick={onCancel}>
